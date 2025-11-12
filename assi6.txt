@@ -1,0 +1,32 @@
+# --- Simple Web Crawler for Product Info (Books Example) ---
+
+import requests
+from bs4 import BeautifulSoup
+from urllib.parse import urljoin
+
+# Step 1: Target site (demo e-commerce site)
+url = "https://books.toscrape.com/catalogue/page-1.html"
+
+# Step 2: Get webpage content
+response = requests.get(url)
+
+# Use .content to get full HTML bytes
+soup = BeautifulSoup(response.content, "html.parser")
+
+# Step 3: Find all product containers
+products = soup.find_all("article", class_="product_pod")
+
+print(f"✅ Found {len(products)} products on the page.\n")
+print("Product Information from BooksToScrape:\n")
+
+# Step 4: Extract product name, price, and link
+for product in products:
+    name = product.h3.a["title"]
+    price = product.find("p", class_="price_color").text
+    link = product.h3.a["href"]
+    full_link = urljoin("https://books.toscrape.com/catalogue/", link)
+
+    print(f"Name : {name}")
+    print(f"Price: {price}")
+    print(f"Link : {full_link}")
+    print("-" * 60)
